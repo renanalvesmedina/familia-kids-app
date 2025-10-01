@@ -1,20 +1,26 @@
 import { useState } from 'react';
-import { Send, User, Phone, BicepsFlexed } from 'lucide-react';
-import logo from './assets/BLACK_YELLOW_HORIZONTAL.png';
+import { Send, User, Phone, Baby, Cake, FileUser } from 'lucide-react';
+import logo from './assets/FAMÍLIA KIDS.png';
 
 import './App.css'
 
 interface FormData {
-  nome: string;
+  nomeResponsavel: string;
   telefone: string;
-  ministerios: string[];
+  parentesco: string;
+  nomeCrianca: string;
+  idade: number;
+  termo: boolean;
 }
 
 function App() {
   const [formData, setFormData] = useState<FormData>({
-    nome: '',
+    nomeResponsavel: '',
     telefone: '',
-    ministerios: [],
+    parentesco: '',
+    nomeCrianca: '',
+    idade: 0,
+    termo: false,
   });
 
   const [isLoading, setIsLoading] = useState(false);
@@ -52,23 +58,25 @@ function App() {
     setMessage('');
 
     try {
-      const response = await fetch('https://automacao.igrejafamilia.net.br/webhook/voluntariado', {
+      const response = await fetch('https://automacao.igrejafamilia.net.br/webhook/kids', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          ...formData,
-          ministerios: formData.ministerios.join(', '), // Envia como string separada por vírgula
+          ...formData
         }),
       });
 
       if (response.ok) {
         setMessage('Cadastro realizado com sucesso!');
         setFormData({
-          nome: '',
+          nomeResponsavel: '',
           telefone: '',
-          ministerios: [],
+          parentesco: '',
+          nomeCrianca: '',
+          idade: 0,
+          termo: false,
         });
       } else {
         throw new Error('Erro ao enviar dados');
@@ -87,7 +95,7 @@ function App() {
         {/* Logo da Igreja */}
         <div className="flex flex-col items-center text-center mb-8">
           <img src={logo} alt="Igreja Familia" className='w-42' />
-          {/* <p className="text-gray-900 text-lg font-bold mt-6">Inscrição Jejum da Família</p> */}
+          <p className="text-gray-900 text-lg font-bold mt-6">Inscrição dia das crianças Familia Kids</p>
         </div>
 
         {/* Mensagem de Status */}
@@ -107,12 +115,12 @@ function App() {
           <div>
             <label className="flex items-center text-sm font-medium text-gray-700 mb-2">
               <User className="w-4 h-4 mr-2 text-yellow-500" />
-              Nome Completo
+              Nome do Responsável
             </label>
             <input
               type="text"
-              name="nome"
-              value={formData.nome}
+              name="nomeResponsavel"
+              value={formData.nomeResponsavel}
               onChange={handleInputChange}
               required
               className="w-full px-4 py-3 border text-zinc-900 border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-colors"
@@ -124,7 +132,7 @@ function App() {
           <div>
             <label className="flex items-center text-sm font-medium text-gray-700 mb-2">
               <Phone className="w-4 h-4 mr-2 text-yellow-500" />
-              Celular
+              Celular do Responsável
             </label>
             <input
               type="tel"
@@ -137,61 +145,77 @@ function App() {
             />
           </div>
 
-          {/* Ministerio */}
+          {/* Parentesco */}
           <div>
             <label className="flex items-center text-sm font-medium text-gray-700 mb-2">
-              <BicepsFlexed className="w-4 h-4 mr-2 text-yellow-500" />
-              Quais ministérios você deseja participar?
+              <FileUser className="w-4 h-4 mr-2 text-yellow-500" />
+              Parentesco com a Criança
             </label>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-2">
-              {[
-                "Apoio",
-                "Balcão de Membresia",
-                "Boas Vindas",
-                "Estacionamento",
-                "Recepção",
-                "Sala de Voluntários",
-                "Dizimos e Ofertas",
-                "Fotografia e Video",
-                "Transmissão",
-                "Iluminação",
-                "Projeção",
-                "Kids",
-                "Familia Music",
-                "Teatro",
-                "Dança",
-                "Haja",
-                "Familia Store"
-              ].map((min) => (
-                <label key={min} className="flex items-center text-base text-zinc-900">
-                  <input
-                    type="checkbox"
-                    name="ministerios"
-                    value={min}
-                    checked={formData.ministerios.includes(min)}
-                    onChange={e => {
-                      const checked = e.target.checked;
-                      setFormData(prev => ({
-                        ...prev,
-                        ministerios: checked
-                          ? [...prev.ministerios, min]
-                          : prev.ministerios.filter(j => j !== min)
-                      }));
-                    }}
-                    className="mr-2 accent-yellow-500"
-                  />
-                  {min === "Kids" ? "Familia Kids" : min === "Familia Music" ? "Familia Music (Louvor)" : min}
-                </label>
-              ))}
-            </div>
-            <p className="text-xs text-gray-500 mt-1">Selecione um ou mais ministérios.</p>
+            <input
+              type="text"
+              name="parentesco"
+              value={formData.parentesco}
+              onChange={handleInputChange}
+              required
+              className="w-full px-4 py-3 border text-zinc-900 border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-colors"
+              placeholder="Ex: Mãe, Pai, Tio, etc."
+            />
+          </div>
+
+          {/* Nome da Criança */}
+          <div>
+            <label className="flex items-center text-sm font-medium text-gray-700 mb-2">
+              <Baby className="w-4 h-4 mr-2 text-yellow-500" />
+              Nome da Criança
+            </label>
+            <input
+              type="text"
+              name="nomeCrianca"
+              value={formData.nomeCrianca}
+              onChange={handleInputChange}
+              required
+              className="w-full px-4 py-3 border text-zinc-900 border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-colors"
+              placeholder="Digite o nome da criança"
+            />
+          </div>
+
+          {/* Idade da Criança */}
+          <div>
+            <label className="flex items-center text-sm font-medium text-gray-700 mb-2">
+              <Cake className="w-4 h-4 mr-2 text-yellow-500" />
+              Idade da Criança
+            </label>
+            <input
+              type="number"
+              name="idade"
+              value={formData.idade || ''}
+              onChange={handleInputChange}
+              required
+              min={0}
+              className="w-full px-4 py-3 border text-zinc-900 border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-colors"
+              placeholder="Digite a idade da criança"
+            />
+          </div>
+
+          {/* Termo de Responsabilidade */}
+          <div className="flex items-start">
+            <input
+              type="checkbox"
+              name="termo"
+              checked={formData.termo}
+              onChange={handleInputChange}
+              className="mt-1 mr-2 h-4 w-4 text-yellow-500 border-gray-300 rounded focus:ring-yellow-500"
+            />
+            <label className="text-left text-sm text-gray-700">
+              Confirmo que não estou participando do coral kids e estarei presente no dia 12 de outubro, disponível para servir em qualquer uma das celebrações as 17h ou às 19h30.
+            </label>
           </div>
 
           {/* Botão Submit */}
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full bg-yellow-500 hover:bg-yellow-600 disabled:bg-yellow-300 text-white font-medium py-4 px-6 rounded-lg transition-colors flex items-center justify-center space-x-2 mt-6"
+            className="w-full bg-gradient-to-t from-[#FF7B00] to-[#FABA16] hover:opacity-90 disabled:opacity-60 text-white font-medium py-4 px-6 rounded-lg transition-colors flex items-center justify-center space-x-2 mt-6"
           >
             {isLoading ? (
               <>
