@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Send, User, Phone, Baby, Cake, FileUser } from 'lucide-react';
 import logo from './assets/FAMÍLIA KIDS.png';
 
@@ -23,6 +23,8 @@ function App() {
     termo: false,
   });
 
+  const dateClose = new Date("2025-10-07T00:00:00-03:00");
+  const [isColsed, setIsClosed] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState('');
 
@@ -88,14 +90,23 @@ function App() {
       setIsLoading(false);
     }
   };
-  
+
+  useEffect(() => {
+    const now = new Date();
+    if(now > dateClose) {
+      setIsClosed(true);
+    }
+  }, []);
+
   return (
     <div className="min-h-full min-w-full bg-white">
       <div className="max-w-md mx-auto px-4 py-6">
         {/* Logo da Igreja */}
         <div className="flex flex-col items-center text-center mb-8">
           <img src={logo} alt="Igreja Familia" className='w-42' />
-          <p className="text-gray-900 text-lg font-bold mt-6">Inscrição dia das crianças Familia Kids</p>
+          { isColsed ? <p className="text-red-700 text-lg font-bold mt-6">Inscrições Encerradas!!!</p> : 
+          <p className="text-gray-900 text-lg font-bold mt-6">Inscrição dia das crianças Familia Kids</p>}
+          
         </div>
 
         {/* Mensagem de Status */}
@@ -122,6 +133,7 @@ function App() {
               name="nomeResponsavel"
               value={formData.nomeResponsavel}
               onChange={handleInputChange}
+              disabled={isColsed}
               required
               className="w-full px-4 py-3 border text-zinc-900 border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-colors"
               placeholder="Digite seu nome completo"
@@ -139,6 +151,7 @@ function App() {
               name="telefone"
               value={formData.telefone}
               onChange={handleInputChange}
+              disabled={isColsed}
               required
               className="w-full px-4 py-3 border text-zinc-900 border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-colors"
               placeholder="27900000000"
@@ -156,6 +169,7 @@ function App() {
               name="parentesco"
               value={formData.parentesco}
               onChange={handleInputChange}
+              disabled={isColsed}
               required
               className="w-full px-4 py-3 border text-zinc-900 border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-colors"
               placeholder="Ex: Mãe, Pai, Tio, etc."
@@ -173,6 +187,7 @@ function App() {
               name="nomeCrianca"
               value={formData.nomeCrianca}
               onChange={handleInputChange}
+              disabled={isColsed}
               required
               className="w-full px-4 py-3 border text-zinc-900 border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-colors"
               placeholder="Digite o nome da criança"
@@ -190,6 +205,7 @@ function App() {
               name="idade"
               value={formData.idade || ''}
               onChange={handleInputChange}
+              disabled={isColsed}
               required
               min={0}
               className="w-full px-4 py-3 border text-zinc-900 border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 transition-colors"
@@ -202,6 +218,7 @@ function App() {
             <input
               type="checkbox"
               name="termo"
+              disabled={isColsed}
               checked={formData.termo}
               onChange={handleInputChange}
               className="mt-1 mr-2 h-4 w-4 text-yellow-500 border-gray-300 rounded focus:ring-yellow-500"
@@ -214,7 +231,7 @@ function App() {
           {/* Botão Submit */}
           <button
             type="submit"
-            disabled={isLoading}
+            disabled={isLoading || isColsed}
             className="w-full bg-gradient-to-t from-[#FF7B00] to-[#FABA16] hover:opacity-90 disabled:opacity-60 text-white font-medium py-4 px-6 rounded-lg transition-colors flex items-center justify-center space-x-2 mt-6"
           >
             {isLoading ? (
